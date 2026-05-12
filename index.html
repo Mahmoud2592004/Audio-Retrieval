@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Audio Intelligence | Premium Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #A855F7;
+            --secondary: #3B82F6;
+            --bg: #0F172A;
+            --card: rgba(30, 41, 59, 0.7);
+            --border: rgba(148, 163, 184, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .header {
+            margin-top: 4rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            background: linear-gradient(135deg, #fff 0%, #A855F7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1300px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .tab { cursor: pointer; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem; transition: 0.2s; color: #94A3B8; }
+        .tab.active { background: rgba(168, 85, 247, 0.1); color: var(--primary); font-weight: 600; }
+
+        /* Upload Area */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 2rem 1rem;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+        }
+        .upload-zone:hover { border-color: var(--primary); background: rgba(168, 85, 247, 0.05); }
+
+        /* Recorder */
+        .recorder-box { text-align: center; padding: 1.5rem; }
+        .record-btn {
+            width: 80px; height: 80px; border-radius: 50%; border: none;
+            background: #ef4444; color: white; font-size: 1.5rem;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            margin-bottom: 1rem;
+        }
+        .record-btn.recording { animation: pulse 1.5s infinite; background: #991b1b; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* Results */
+        .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+        .transcript-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+        .timestamp { color: var(--primary); font-weight: 600; font-size: 0.85rem; margin-right: 0.5rem; }
+        
+        .source-box {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 3px solid var(--secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .summary-box {
+            background: rgba(168, 85, 247, 0.1);
+            padding: 1.5rem;
+            border-radius: 16px;
+            line-height: 1.7;
+            font-size: 1.1rem;
+            color: #E2E8F0;
+        }
+
+        /* Loading Spinner */
+        #loader { display: none; margin-top: 1rem; text-align: center; font-size: 0.9rem; color: #94A3B8; }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary);
+            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Audio Intelligence Hub</h1>
+        <p style="color: #94A3B8">Lightweight Pipeline • VRAM Optimized</p>
+    </div>
+
+    <div class="container">
+        <!-- Control Side -->
+        <div class="glass-card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('upload')">Upload</div>
+                <div class="tab" onclick="switchTab('record')">Record</div>
+            </div>
+
+            <!-- Upload View -->
+            <div id="uploadView">
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">📁</div>
+                    <div id="fileStatus">Click to upload audio</div>
+                    <input type="file" id="fileInput" hidden accept="audio/*">
+                </div>
+            </div>
+
+            <!-- Record View -->
+            <div id="recordView" style="display: none;">
+                <div class="recorder-box">
+                    <button id="recordBtn" class="record-btn" onclick="toggleRecording()">🎤</button>
+                    <div id="recordTimer" style="font-weight: 600; font-size: 1.2rem; color: #ef4444;">00:00</div>
+                    <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 0.5rem;" id="recordStatus">Ready to record</p>
+                </div>
+            </div>
+
+            <button id="analyzeBtn" class="btn" disabled onclick="startAnalysis()">Start Deep Analysis</button>
+            
+            <div id="loader">
+                <div class="spinner"></div>
+                <div id="loadStatus">Initializing Neural Models...</div>
+                <div style="font-size: 0.7rem; margin-top: 10px; color: #475569;">Bypassing FFMPEG: Active</div>
+            </div>
+        </div>
+
+        <!-- Result Side -->
+        <div class="glass-card">
+            <div id="welcomeMessage" style="text-align: center; padding: 5rem 0; color: #475569;">
+                <h3>System Ready</h3>
+                <p>Provide audio input to begin analysis</p>
+            </div>
+
+            <div id="resultContent" style="display: none;">
+                <div class="section-title">✨ Egyptian Arabic Summary</div>
+                <div id="summaryText" class="summary-box"></div>
+
+                <div style="height: 3rem;"></div>
+
+                <div class="section-title">📝 Transcription & Sources</div>
+                <div id="transcriptList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFile = null;
+        let mediaRecorder;
+        let audioChunks = [];
+        let timerInterval;
+        let seconds = 0;
+
+        function switchTab(type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('uploadView').style.display = type === 'upload' ? 'block' : 'none';
+            document.getElementById('recordView').style.display = type === 'record' ? 'block' : 'none';
+        }
+
+        const fileInput = document.getElementById('fileInput');
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                currentFile = e.target.files[0];
+                document.getElementById('fileStatus').innerText = currentFile.name;
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        });
+
+        async function toggleRecording() {
+            const btn = document.getElementById('recordBtn');
+            const status = document.getElementById('recordStatus');
+            const timer = document.getElementById('recordTimer');
+
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/wav' });
+                    currentFile = new File([blob], "recording.wav", { type: "audio/wav" });
+                    document.getElementById('analyzeBtn').disabled = false;
+                    status.innerText = "Recording ready!";
+                };
+
+                mediaRecorder.start();
+                btn.classList.add('recording');
+                status.innerText = "Recording...";
+                
+                seconds = 0;
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                    const s = (seconds % 60).toString().padStart(2, '0');
+                    timer.innerText = `${m}:${s}`;
+                }, 1000);
+            } else {
+                mediaRecorder.stop();
+                btn.classList.remove('recording');
+                clearInterval(timerInterval);
+            }
+        }
+
+        async function startAnalysis() {
+            if (!currentFile) return;
+
+            const formData = new FormData();
+            formData.append('file', currentFile);
+
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('resultContent').style.display = 'none';
+
+            const statusTexts = ["Transcribing Audio (CPU)...", "Purging VRAM...", "Generating Summary (Qwen3)...", "Ranking Local Matches...", "Fetching YouTube References..."];
+            let sIdx = 0;
+            const interval = setInterval(() => {
+                document.getElementById('loadStatus').innerText = statusTexts[sIdx % statusTexts.length];
+                sIdx++;
+            }, 5000);
+
+            try {
+                const response = await fetch('/analyze', { method: 'POST', body: formData });
+                const data = await response.json();
+
+                document.getElementById('summaryText').innerText = data.summary;
+                const list = document.getElementById('transcriptList');
+                list.innerHTML = '';
+                
+                data.chunks.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = 'transcript-item';
+                    div.innerHTML = `<span class="timestamp">[${c.timestamp[0].toFixed(1)}s]</span> ${c.text}`;
+                    
+                    const match = data.retrieval.find(r => r.chunk === c.text);
+                    if (match) {
+                        div.innerHTML += `
+                            <div class="source-box">
+                                <b style="color:var(--secondary)">SOURCE:</b> ${match.yt_text.substring(0, 100)}...
+                                <br><a href="${match.yt_url}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; font-weight:600;">[WATCH ON YOUTUBE]</a>
+                            </div>
+                        `;
+                    }
+                    list.appendChild(div);
+                });
+
+                document.getElementById('resultContent').style.display = 'block';
+            } catch (err) {
+                alert("Analysis failed. See terminal for VRAM logs.");
+            } finally {
+                clearInterval(interval);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
