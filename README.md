@@ -135,5 +135,6 @@ Project-2-Audio/
 
 ---
 
-**Developed for NLP Course — 4th Year, 2nd Term.**  
-*By Mahmoud, Abdullah — 2025*
+**Developers**  
+*Mahmoud El-Sherbiny*
+*Abdullah El-Sherbiny*
