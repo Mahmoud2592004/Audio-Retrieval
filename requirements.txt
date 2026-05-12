@@ -1,0 +1,32 @@
+# Core Machine Learning
+torch
+transformers
+accelerate
+bitsandbytes
+peft
+sentence-transformers
+faiss-cpu
+
+# Audio Processing
+librosa
+soundfile
+sounddevice
+scipy
+numpy
+speechbrain
+
+# ASR Engine
+faster-whisper
+
+# Web & UI
+streamlit
+fastapi
+uvicorn
+python-multipart
+
+# Utilities
+tqdm
+requests
+matplotlib
+pandas
+jinja2
